@@ -24,12 +24,15 @@ def conection_client(nome_cliente, client_socket, client_address, clientes_on, c
             response = list_users_groups(group_name, groups)
             client_socket.send(str(response).encode('utf-8'))
 
-
         elif data.startswith('-entrargrupo'):
             group_name = data.split()[1]
             response = join_group(group_name, groups, nome_cliente)
             client_socket.send(response.encode('utf-8'))
 
+        elif data.startswith('-sairgrupo'):
+            group_name = data.split()[1]
+            response = leave_group(group_name, groups, nome_cliente)
+            client_socket.send(response.encode('utf-8'))
 
         mensagem = f"{nome_cliente}: {data}"
         print(f'clientes on --> {clientes_on}')

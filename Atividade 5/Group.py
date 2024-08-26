@@ -28,7 +28,7 @@ def join_group(group_name, groups, person_name):
         if person_name in groups[group_name]:
             return f"Erro, {person_name} já está cadastrado no grupo {group_name}"
         print(f'dentro do metodo join. | {person_name}, {group_name}, {groups[group_name]}')
-#        groups[group_name].append(person_name)
+#        groups[group_name].append(person_name)3
         groups[group_name] = groups[group_name] + [person_name]
         print(f'join: --------- {groups[group_name]}')
         return f"{person_name} adicionado no grupo {group_name}"
@@ -38,7 +38,9 @@ def join_group(group_name, groups, person_name):
 def leave_group(group_name, groups, person_name):
     if group_name in groups:
         if person_name in groups[group_name]:
-            groups[group_name].remove(person_name)
+            list_groups = list(groups[group_name])
+            list_groups.remove(person_name)
+            groups[group_name] = list_groups
             return f"{person_name} foi removido(a) do grupo {group_name}"
         return f"Erro, {person_name} não está cadastrado(a) no grupo {group_name}"
     return "Erro, nenhum grupo cadastrado"
