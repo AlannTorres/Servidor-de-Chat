@@ -19,6 +19,6 @@ if __name__ == "__main__":
     print("Chat inciado...")
 
     while True:
-        print("contunar: digitar normal. Sair: exit")
+        print("continuar: digitar normal. Sair: exit")
         mensagem = input("")
         client_socket.send(mensagem.encode('utf-8'))
