@@ -27,7 +27,6 @@ def conection_client(nome_cliente, client_socket, client_address, clientes_on, c
 
         elif data.startswith('-entrargrupo'):
             group_name = data.split()[1]
-            print(f'groupp naameee ----> {group_name} cliente {nome_cliente} groups {groups.keys()}')
             response = join_group(group_name, groups, nome_cliente)
             client_socket.send(response.encode('utf-8'))
 

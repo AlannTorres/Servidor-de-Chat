@@ -28,7 +28,8 @@ def join_group(group_name, groups, person_name):
         if person_name in groups[group_name]:
             return f"Erro, {person_name} já está cadastrado no grupo {group_name}"
         print(f'dentro do metodo join. | {person_name}, {group_name}, {groups[group_name]}')
-        groups[group_name].append(person_name)
+#        groups[group_name].append(person_name)
+        groups[group_name] = groups[group_name] + [person_name]
         print(f'join: --------- {groups[group_name]}')
         return f"{person_name} adicionado no grupo {group_name}"
     return "Erro, nenhum grupo cadastrado"
