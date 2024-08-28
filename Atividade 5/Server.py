@@ -16,7 +16,7 @@ def conection_client(nome_cliente, client_socket, client_address, clientes_on, c
         now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         
         if data.lower() == 'exit':
-            clientes_on.pop(client_address)
+            clientes_on.pop(nome_cliente)
             clientes_off.append(nome_cliente)
             return client_socket.close()
         elif data.startswith('-criargrupo'):
@@ -53,7 +53,7 @@ def conection_client(nome_cliente, client_socket, client_address, clientes_on, c
 
             if tipo_destinatario == 'U':
                 destinatario_socket = None
-                for addr, (cliente, sock) in clientes_on.items():
+                for cliente, (addr, sock) in clientes_on.items():
                     if cliente == destinatario:
                         destinatario_socket = sock
                         break
@@ -68,7 +68,7 @@ def conection_client(nome_cliente, client_socket, client_address, clientes_on, c
                 if destinatario in groups:
                     for member in groups[destinatario]:
                         if member in [cliente for _, (cliente, _) in clientes_on.items()]:
-                            for addr, (cliente, sock) in clientes_on.items():
+                            for cliente, (addr, sock) in clientes_on.items():
                                 if cliente == member:
                                     sock.send(mensagem_formatada.encode('utf-8'))
                         else:
@@ -87,7 +87,7 @@ def conection_client(nome_cliente, client_socket, client_address, clientes_on, c
             mensagem_formatada = f"({nome_cliente}, {now}) {mensagem}"
 
             if tipo_mensagem == 'C':  # Para todos os usuários conectados
-                for addr, (cliente_local, socket_cliente_local) in clientes_on.items():
+                for cliente_local, (addr, socket_cliente_local) in clientes_on.items():
                     if addr != client_address:
                         socket_cliente_local.send(mensagem_formatada.encode('utf-8'))
 
@@ -97,7 +97,7 @@ def conection_client(nome_cliente, client_socket, client_address, clientes_on, c
                 client_socket.send("Mensagem enviada para usuários offline.".encode('utf-8'))
 
             elif tipo_mensagem == 'T':  # Para todos os usuários (online e offline)
-                for addr, (cliente_local, socket_cliente_local) in clientes_on.items():
+                for cliente_local, (addr, socket_cliente_local) in clientes_on.items():
                     socket_cliente_local.send(mensagem_formatada.encode('utf-8'))
 
                 for cliente in clientes_off:
@@ -110,7 +110,6 @@ def conection_client(nome_cliente, client_socket, client_address, clientes_on, c
             for msg in pending_messages[nome_cliente]:
                 client_socket.send(msg.encode('utf-8'))
             pending_messages.pop(nome_cliente)
-
 
 if __name__ == "__main__":
     HOST = 'localhost'
@@ -134,15 +133,22 @@ if __name__ == "__main__":
             if nome_cliente in CLIENTES_OFFLINE:
                 CLIENTES_OFFLINE.remove(nome_cliente)
                 print(f"Cliente {nome_cliente} foi restaurado.")
-            elif nome_cliente in [nome for _, nome in CLIENTES_CONNECT.values()]:
+            elif nome_cliente in CLIENTES_CONNECT.keys():
                 client_socket.send("Erro: Usuário já conectado.".encode('utf-8'))
                 client_socket.close()
                 continue
 
-            CLIENTES_CONNECT[client_address] = (nome_cliente, client_socket)
+            CLIENTES_CONNECT[nome_cliente] = (client_address, client_socket)
             client_process = Process(target=conection_client, args=(
-                nome_cliente, client_socket, client_address, CLIENTES_CONNECT, CLIENTES_OFFLINE, GROUPS, PENDING_MESSAGES))
+                nome_cliente, 
+                client_socket, 
+                client_address, 
+                CLIENTES_CONNECT, 
+                CLIENTES_OFFLINE, 
+                GROUPS, 
+                PENDING_MESSAGES))
+            
             print(f"Cliente {nome_cliente} conectado de {client_address}")
-            print(f'clientes on --> {CLIENTES_OFFLINE }')
-            print(f'clientes off --> {CLIENTES_CONNECT }')
+            print(f'clientes on --> {CLIENTES_CONNECT}')
+            print(f'clientes off --> {CLIENTES_OFFLINE}')
             client_process.start()
