@@ -16,9 +16,9 @@ if __name__ == "__main__":
     client_socket.send(nome_cliente.encode('utf-8'))
     resgatar = Process(target=resgate_mensage, args=(client_socket,))
     resgatar.start()
+    print("Info: Caso necessite de ajuda, digite -help")
     print("Chat inciado...")
 
     while True:
-        print("continuar: digitar normal. Sair: exit")
         mensagem = input("")
         client_socket.send(mensagem.encode('utf-8'))
