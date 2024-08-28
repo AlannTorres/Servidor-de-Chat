@@ -104,7 +104,6 @@ def conection_client(nome_cliente, client_socket, client_address, clientes_on, c
                     if cliente == destinatario:
                         destinatario_socket = sock
                         break
-
                 if destinatario_socket:
                     destinatario_socket.send(mensagem_formatada.encode('utf-8'))
                 else:
@@ -115,17 +114,14 @@ def conection_client(nome_cliente, client_socket, client_address, clientes_on, c
             elif tipo_destinatario == 'G':
                 if destinatario in groups:
                     for member in groups[destinatario]:
-                        if member in [cliente for _, (cliente, _) in clientes_on.items()]:
-                            for cliente, (addr, sock) in clientes_on.items():
-                                if cliente == member:
-                                    sock.send(mensagem_formatada.encode('utf-8'))
-                        else:
-                            store_message(member, mensagem_formatada, pending_messages)
+                        if member != nome_cliente:
+                            if member in clientes_on:
+                                clientes_on[member][1].send(mensagem_formatada.encode('utf-8'))
+                            else:
+                                store_message(member, mensagem_formatada, pending_messages)
                     client_socket.send(f"Mensagem enviada para o grupo {destinatario}.".encode('utf-8'))
                 else:
                     client_socket.send("Grupo não encontrado.".encode('utf-8'))
-
-
 
 if __name__ == "__main__":
     HOST = 'localhost'
