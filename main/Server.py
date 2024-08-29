@@ -19,6 +19,14 @@ def conection_client(nome_cliente, client_socket, client_address, clientes_on, c
         # Solicitar informações sobre o comando
         if data.startswith('-help'):
             client_socket.send(DOC.encode('utf-8'))
+
+        # Listar usuarios
+        elif data.startswith('-listarusuarios'):
+            if clientes_on:
+                usuarios_conectados = "\n".join(clientes_on.keys())
+                client_socket.send(f"Usuários conectados:\n{usuarios_conectados}".encode('utf-8'))
+            else:
+                client_socket.send("Nenhum usuário conectado no momento.".encode('utf-8'))
         
         # Desconectar do servidor
         elif data.startswith('-exit'):
@@ -146,7 +154,6 @@ if __name__ == "__main__":
                 CLIENTES_OFFLINE.remove(nome_cliente)
                 print(f"Cliente {nome_cliente} foi restaurado.")
                 client_socket.send(f"Cliente {nome_cliente} foi restaurado.".encode('utf-8'))
-                # Verifica se o cliente tem mensagens pendentes
                 if nome_cliente in PENDING_MESSAGES:
                     print("Mensagens restauradas:")
                     for msg in PENDING_MESSAGES[nome_cliente]:
